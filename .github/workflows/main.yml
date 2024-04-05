@@ -1,0 +1,29 @@
+name: CI/CD Pipeline
+
+on:
+ push:
+  branches:
+   - master
+
+jobs:
+ build:
+  runs-on: ubuntu-latest
+  steps:
+   - uses: actions/checkout@v2
+
+   - name: Build
+     run: |
+        mkdir build
+        cp index.html build/index.html
+        cp style.css build/style.css
+
+        deploy:
+        needs: build
+        environment: production
+        steps:
+          - uses: actions/checkout@v2
+          - name: Deploy to GitHub Pages
+            uses: actions/deploy-pages@v2
+            with:
+              source: ./build
+              github_token: ${{ secrets.GITHUB_TOKEN }}
